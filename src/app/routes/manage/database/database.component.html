@@ -1,0 +1,119 @@
+<page-header [autoTitle]="false">
+
+</page-header>
+<nz-card [nzBordered]="false">
+  <form nz-form [nzLayout]="'inline'">
+    <div class="text-center">
+      <nz-input-group nzSearch nzSize="large" [nzSuffix]="suffixButton" style="width: 520px;">
+        <input type="text" nz-input placeholder="请输入">
+        <ng-template #suffixButton>
+          <button nz-button nzType="primary" nzSize="large" nzSearch>Search</button>
+        </ng-template>
+      </nz-input-group>
+    </div>
+  </form>
+</nz-card>
+<nz-divider nzText="公共在线数据库" nzOrientation="left"></nz-divider>
+<button nz-button (click)="openModal()" [nzType]="'primary'" class="mr-sm mb-md">
+  <i class="anticon anticon-reload"></i>
+  <span>公共在线数据库更新</span>
+</button>
+<nz-list [nzLoading]="loading" [nzRenderItem]="item" [nzDataSource]="list" [nzPagination]="pagination" [nzGrid]="{gutter: 24, lg: 6, md: 8, sm: 12, xs: 24 }">
+  <ng-template #item let-item>
+    <nz-list-item>
+      <nz-card nzHoverable [nzCover]="cover">
+        <ng-template #cover>
+          <img alt="{{item.title}}" src="{{item.cover}}">
+        </ng-template>
+        <nz-card-meta [nzTitle]="nzTitle" [nzDescription]="item.subDescription">
+          <ng-template #nzTitle>
+            <a (click)="msg.success('标题：' + item.id);">{{item.title}}</a>
+          </ng-template>
+        </nz-card-meta>
+        <!-- <div class="card-item-content">
+          <span class="text-grey">{{item.updatedAt | _date:'fn'}}</span>
+          <avatar-list size="mini">
+            <avatar-list-item *ngFor="let m of item.members" [src]="m.avatar" [tips]="m.name"></avatar-list-item>
+          </avatar-list>
+        </div> -->
+      </nz-card>
+    </nz-list-item>
+  </ng-template>
+  <ng-template #pagination>
+    <nz-pagination class="text-center mt-sm" [nzTotal]="50" [nzPageSize]="5" (nzPageIndexChange)="getData()"></nz-pagination>
+  </ng-template>
+</nz-list>
+<nz-divider nzText="我的数据库" nzOrientation="left"></nz-divider>
+<button nz-button (click)="openModal()" [nzType]="'primary'" class="mr-sm mb-md">
+  <i class="anticon anticon-plus"></i>
+  <span>新建</span>
+</button>
+<nz-card [nzBordered]="false">
+  <simple-table #st [columns]="columns" [data]="users" [loading]="loading" (checkboxChange)="checkboxChange($event)" (filterChange)="getData()"
+    [noResult]="'暂无数据'" [isPageIndexReset]="false">
+
+  </simple-table>
+</nz-card>
+<!-- 新增编辑 -->
+<nz-modal [(nzVisible)]="modalVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter" (nzOnCancel)="modalVisible=false">
+  <ng-template #modalContent>
+    <form nz-form [formGroup]="form">
+      <!-- <nz-row nzGutter="8" class="mb-lg">
+        <nz-col nzspan="24" class="detailName">
+          <i></i>检测项目
+        </nz-col>
+      </nz-row> -->
+
+      <nz-form-item>
+        <nz-form-label nzRequired nzSpan="6">
+          数据库名称
+        </nz-form-label>
+        <nz-form-control nzHasFeedback nzSpan="14">
+          <input nz-input formControlName="name" placeholder="请填写数据库名称">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired nzSpan="6">
+          公开类型
+        </nz-form-label>
+        <nz-form-control nzHasFeedback nzSpan="14">
+          <nz-select formControlName="type" [nzShowSearch]="true" [nzPlaceHolder]="'数据库类型'">
+            <nz-option [nzLabel]="'私密'" [nzValue]="'private'"></nz-option>
+            <nz-option [nzLabel]="'公开'" [nzValue]="'public'"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      
+      <nz-form-item>
+        <nz-form-label nzRequired nzSpan="6">
+          备注
+        </nz-form-label>
+        <nz-form-control nzHasFeedback nzSpan="14">
+          <textarea nz-input formControlName="sex" placeholder="请填写备注" [nzAutosize]="{ minRows: 2, maxRows: 6 }"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired nzSpan="6">
+          文件上传
+        </nz-form-label>
+        <nz-form-control nzHasFeedback nzSpan="14">
+          <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload">
+            <button nz-button>
+              <i class="anticon anticon-upload"></i>
+              <span>上传文件</span>
+            </button>
+          </nz-upload>
+          <!-- <input nz-input formControlName="age" placeholder="请填写年龄"> -->
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-template>
+  <ng-template #modalFooter>
+    <div nz-row [nzType]="'flex'" [nzJustify]="'center'">
+      <button nz-button [nzType]="'primary'" [disabled]="!form.valid" (click)="submitForm($event,form.value)">提交</button>
+      <button nz-button (click)="resetForm($event)">重置</button>
+    </div>
+  </ng-template>
+</nz-modal>

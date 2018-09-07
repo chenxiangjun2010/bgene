@@ -1,0 +1,479 @@
+<page-header [title]="'样本库管理'">
+    <ng-template #tab>
+        <nz-tabset [(nzSelectedIndex)]="pos">
+            <nz-tab *ngFor="let i of tabs" [nzTitle]="i.tab" (nzSelect)="to(i)"></nz-tab>
+        </nz-tabset>
+    </ng-template>
+</page-header>
+
+<!-- <nz-radio-group [(ngModel)]="nzList" class="listType">
+  <label nz-radio-button [nzValue]="'list'">列表</label>
+  <label nz-radio-button [nzValue]="'card'">冰箱</label>
+</nz-radio-group> -->
+<nz-card [nzBordered]="false" *ngIf="pos=='0'">
+    <form nz-form (ngSubmit)="searchByName(true)" [nzLayout]="'inline'" class="search__form">
+        <nz-row [nzGutter]="24">
+            <nz-col [nzSpan]="8">
+                <nz-form-item class="d-flex">
+                    <nz-form-label>关键字</nz-form-label>
+                    <nz-form-control class="flex-1">
+                        <input nz-input [(ngModel)]="searchName" name="searchName" placeholder="请输入">
+                    </nz-form-control>
+                </nz-form-item>
+            </nz-col>
+            <nz-col>
+                <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+                <button nz-button type="reset" (click)="searchByName(false)" class="mx-sm">重置</button>
+            </nz-col>
+        </nz-row>
+    </form>
+    <button nz-button (click)="openModal(true)" [nzType]="'primary'" class="mr-sm">
+        <i class="anticon anticon-plus"></i>
+        <span>新建样本</span>
+    </button>
+    <button nz-button (click)="openChart()" [nzType]="'primary'" class="mr-sm">
+        <i class="anticon anticon-dashboard"></i>
+        <span>显示统计</span>
+    </button>
+    <button nz-button [nzType]="'primary'" class="mr-sm" down-file http-url="./assets/11.svg" file-name="demo中文">
+        <i class="anticon anticon-download"></i>
+        <span>模板下载</span>
+    </button>
+
+    <nz-upload nzAction="https://jsonplaceholder.typicode.com/posts/" [nzShowUploadList]="false">
+        <button nz-button [nzType]="'primary'" class="mr-sm">
+            <i class="anticon anticon-upload"></i>
+            <span>批量导入</span>
+        </button>
+    </nz-upload>
+    <!-- <button nz-button (click)="toIceBox()" [nzType]="'primary'" class="mr-sm">
+    <span>冰箱</span>
+  </button> -->
+    <div class="my-md">
+        <nz-alert [nzType]="'info'" [nzShowIcon]="true" [nzMessage]="message">
+            <ng-template #message>
+                已选择
+                <strong class="text-primary">{{selectedRows.length}}</strong> 项&nbsp;&nbsp;
+                <!-- <strong>{{totalCallNo}}</strong> 人 -->
+                <a *ngIf="totalCallNo > 0" (click)="st.clearCheck()" class="ml-lg">清空</a>
+            </ng-template>
+        </nz-alert>
+    </div>
+    <simple-table [columns]="columns" [data]="sampleList" [loading]="loading" (checkboxChange)="checkboxChange($event)" (filterChange)="getData()"
+        [noResult]="'暂无数据'" [isPageIndexReset]="false">
+
+    </simple-table>
+</nz-card>
+
+<icebox *ngIf="pos=='1'" (voted)="onVoted($event)"></icebox>
+<sampleStatistics *ngIf="pos=='2'"></sampleStatistics>
+<!-- 新增编辑 -->
+<nz-modal [(nzVisible)]="modalVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter" (nzOnCancel)="modalVisible=false"
+    [nzWidth]="800">
+    <ng-template #modalContent>
+        <form nz-form [formGroup]="form">
+            <nz-row nzGutter="8" class="mb-lg">
+                <nz-col nzspan="24" class="detailName">
+                    <i></i>客户信息
+                </nz-col>
+            </nz-row>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="4">
+                    姓名
+                </nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <input nz-input formControlName="name" placeholder="请填写组名">
+                </nz-form-control>
+                <nz-form-label nzRequired [nzSpan]="4">
+                    性别
+                </nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <input nz-input formControlName="sex" placeholder="请填写性别">
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="4">
+                    年龄
+                </nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <input nz-input formControlName="age" placeholder="请填写年龄">
+                </nz-form-control>
+                <nz-form-label nzRequired [nzSpan]="4">
+                    诊断疾病
+                </nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <input nz-input formControlName="illness" placeholder="请填写诊断疾病">
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-row nzGutter="8" class="mb-lg">
+                <nz-col nzspan="24" class="detailName">
+                    <i></i>医院信息
+                </nz-col>
+            </nz-row>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="4">医院</nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请填写医院" formControlName="hospital" (ngModelChange)="getSection(1)">
+                        <nz-option *ngFor="let hospital of (hospitals$ | async)" nzLabel="{{hospital.name}}" nzValue="{{hospital.id}}">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+                <nz-form-label nzRequired [nzSpan]="4">科室</nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请填写科室" formControlName="section" (ngModelChange)="getDoc()" [nzDisabled]="sectionDis">
+                        <nz-option *ngFor="let section of (department$ | async)" nzLabel="{{section.name}}" nzValue="{{section.id}}">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="4">送检医生</nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="请填写送检医生" formControlName="doctor" [nzDisabled]="doctorDis">
+                        <nz-option *ngFor="let doctor of (doctors$ | async)" nzLabel="{{doctor.name}}" nzValue="{{doctor.id}}">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-row nzGutter="8" class="mb-lg">
+                <nz-col nzspan="24" class="detailName">
+                    <i></i>样本信息
+                </nz-col>
+            </nz-row>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="4">
+                    送检编号
+                </nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <input nz-input formControlName="inspectionCode" placeholder="请填写送检编号">
+                </nz-form-control>
+                <nz-form-label nzRequired [nzSpan]="4">
+                    样本类型
+                </nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <input nz-input formControlName="sampleType" placeholder="请填写样本类型">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="4">
+                    组织类型
+                </nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <input nz-input formControlName="orgType" placeholder="请填写组织类型">
+                </nz-form-control>
+                <nz-form-label nzRequired [nzSpan]="4">
+                    采集时间
+                </nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <nz-date-picker formControlName="acqTime" (ngModelChange)="onChange($event)" nzShowTime></nz-date-picker>
+                    <!-- <input nz-input formControlName="acqTime" placeholder="请填写采集时间"> -->
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="4">
+                    存放位置
+                </nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <nz-cascader [nzPlaceHolder]="'请输入'" [nzOptions]="nzOptions" formControlName="position" (ngModelChange)="onChanges($event)">
+                    </nz-cascader>
+                </nz-form-control>
+                <nz-form-label nzRequired [nzSpan]="4">
+                    存放容器
+                </nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <input nz-input formControlName="container" placeholder="请填写存放容器">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="4">
+                    保存方式
+                </nz-form-label>
+                <nz-form-control [nzSpan]="8" nzHasFeedback>
+                    <input nz-input formControlName="mode" placeholder="请填写保存方式">
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-template>
+    <ng-template #modalFooter>
+        <div nz-row [nzType]="'flex'" [nzJustify]="'center'">
+            <button nz-button [nzType]="'primary'" [disabled]="!form.valid" (click)="submitForm($event,form.value)">提交</button>
+            <button nz-button (click)="resetForm($event)">重置</button>
+        </div>
+    </ng-template>
+</nz-modal>
+
+<!-- 详情编辑 -->
+<nz-drawer [nzVisible]="drawervisible" [nzWidth]="640" [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom':'53px' }"
+    [nzTitle]="drawerTitle" [nzClosable]="false" (nzOnClose)="close()">
+    <p class="title detailName">
+        <i></i>客户信息</p>
+    <!-- <nz-divider nzText="客户信息" nzOrientation="left"></nz-divider> -->
+    <form nz-form [formGroup]="form">
+        <nz-form-item class="mb-sm">
+            <nz-form-label nzRequired [nzSpan]="4">
+                姓名
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    张三
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="name" placeholder="请填写组名">
+                </ng-container>
+            </nz-form-control>
+            <nz-form-label nzRequired [nzSpan]="4">
+                性别
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    男
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="sex" placeholder="请填写性别">
+                </ng-container>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item class="mb-sm">
+            <nz-form-label nzRequired [nzSpan]="4">
+                年龄
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="age" placeholder="请填写年龄">
+                </ng-container>
+            </nz-form-control>
+            <nz-form-label nzRequired [nzSpan]="4">
+                诊断疾病
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="illness" placeholder="请填写诊断疾病">
+                </ng-container>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-divider nzDashed class="my-md"></nz-divider>
+        <p class="title detailName">
+            <i></i>医院信息</p>
+        <nz-form-item class="mb-sm">
+            <nz-form-label nzRequired [nzSpan]="4">
+                医院
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="hospital" placeholder="请填写医院">
+                </ng-container>
+
+            </nz-form-control>
+            <nz-form-label nzRequired [nzSpan]="4">
+                科室
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="section" placeholder="请填写科室">
+                </ng-container>
+            </nz-form-control>
+        </nz-form-item>
+
+
+        <nz-form-item class="mb-sm">
+            <nz-form-label nzRequired [nzSpan]="4">
+                送检医生
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="doctor" placeholder="请填写送检医生">
+                </ng-container>
+            </nz-form-control>
+            <nz-form-label nzRequired [nzSpan]="4">
+                病历号
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="record" placeholder="请填写病历号">
+                </ng-container>
+
+            </nz-form-control>
+        </nz-form-item>
+
+
+        <nz-form-item class="mb-sm">
+            <nz-form-label nzRequired [nzSpan]="4">
+                联系方式
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="tel" placeholder="请填写联系方式">
+                </ng-container>
+
+            </nz-form-control>
+            <nz-form-label nzRequired [nzSpan]="4">
+                地址
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="adress" placeholder="请填写地址">
+                </ng-container>
+
+            </nz-form-control>
+        </nz-form-item>
+        <nz-divider nzDashed class="my-md"></nz-divider>
+        <p class="title detailName">
+            <i></i>样本信息</p>
+        <nz-form-item class="mb-sm">
+            <nz-form-label nzRequired [nzSpan]="4">
+                送检编号
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="inspectionCode" placeholder="请填写送检编号">
+                </ng-container>
+
+            </nz-form-control>
+            <nz-form-label nzRequired [nzSpan]="4">
+                样本类型
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="sampleType" placeholder="请填写样本类型">
+                </ng-container>
+
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="mb-sm">
+            <nz-form-label nzRequired [nzSpan]="4">
+                组织类型
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="orgType" placeholder="请填写组织类型">
+                </ng-container>
+
+            </nz-form-control>
+            <nz-form-label nzRequired [nzSpan]="4">
+                采集时间
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="acqTime" placeholder="请填写采集时间">
+                </ng-container>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="mb-sm">
+            <nz-form-label nzRequired [nzSpan]="4">
+                存放位置
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="position" placeholder="请填写存放位置">
+                </ng-container>
+
+            </nz-form-control>
+            <nz-form-label nzRequired [nzSpan]="4">
+                存放容器
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="container" placeholder="请填写存放容器">
+                </ng-container>
+
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="mb-sm">
+            <nz-form-label nzRequired [nzSpan]="4">
+                保存方式
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <ng-container *ngIf="!editCache">
+                    21
+                </ng-container>
+                <ng-container *ngIf="editCache">
+                    <input nz-input formControlName="mode" placeholder="请填写保存方式">
+                </ng-container>
+
+            </nz-form-control>
+            <nz-form-label nzRequired [nzSpan]="4">
+                是否剩余
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                <!-- <nz-radio-group>
+          <label nz-radio [nzDisabled]="'true'" [ngModel]="true">剩余</label>
+          <label nz-radio [nzDisabled]="'true'">未剩余</label>
+        </nz-radio-group> -->
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="mb-sm">
+            <nz-form-label nzRequired [nzSpan]="4">
+                接收时间
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                2017-08-19 10:20
+            </nz-form-control>
+            <nz-form-label nzRequired [nzSpan]="4">
+                样本记录人
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback>
+                张三
+            </nz-form-control>
+        </nz-form-item>
+        <div class="footer">
+            <button type="button" (click)="close()" class="ant-btn" style="margin-right: 8px;">
+                <span>取消</span>
+            </button>
+            <ng-container *ngIf="!editCache">
+                <button type="button" (click)="edit()" class="ant-btn ant-btn-primary">
+                    <span>编辑</span>
+                </button>
+            </ng-container>
+            <ng-container *ngIf="editCache">
+                <button type="button" (click)="close()" class="ant-btn ant-btn-primary">
+                    <span>提交</span>
+                </button>
+            </ng-container>
+        </div>
+    </form>
+</nz-drawer>

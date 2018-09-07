@@ -1,0 +1,117 @@
+<page-header [autoTitle]="false">
+    <ng-template #content>
+        <div class="page-header">
+            <div class="avatar">
+                <nz-avatar nzSrc="https://gw.alipayobjects.com/zos/rmsportal/lctvVCLfRpYCkYxAsiVQ.png"></nz-avatar>
+            </div>
+            <div class="desc">
+                <!-- <div class="desc-title">{{tokenService.get().name}}，欢迎登录</div> -->
+                <div class="desc-title">xxx，欢迎登录</div>
+                <div>角色：
+                    <!-- <span *ngFor="let item of tokenService.get().roles">{{item | roles}} | </span> -->
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <ng-template #extra>
+        <div class="page-extra">
+            <div>
+                <p>项目数</p>
+                <p>56</p>
+            </div>
+            <div>
+                <p>团队内排名</p>
+                <p>8
+                    <span> / 24</span>
+                </p>
+            </div>
+            <div>
+                <p>项目访问</p>
+                <p>2,223</p>
+            </div>
+        </div>
+    </ng-template>
+</page-header>
+<nz-row [nzGutter]="24">
+    <nz-col nzLg="18">
+        <nz-card nzTitle="我的任务(统计)" [nzBordered]="false" class="pie-card" [nzBodyStyle]="{'height': '250px'}" [acl]="['3']">
+            <div nz-row [nzGutter]="4" style="padding:16px 0">
+                <task-chart></task-chart>
+                <!-- <g2-pie [animate]="false" [percent]="28" subTitle="中式快餐" total="28%" [height]="128" [lineWidth]="2"></g2-pie> -->
+            </div>
+        </nz-card>
+        <nz-card nzTitle="我的任务(统计)" [nzBordered]="false" class="pie-card" [nzBodyStyle]="{'height': '250px'}" [acl]="['4','5']">
+            <div nz-row [nzGutter]="4" style="padding:16px 0">
+                <div nz-col [nzSpan]="12">
+                    <ansis-chart></ansis-chart>
+                </div>
+            </div>
+        </nz-card>
+        <nz-card nzTitle="我的任务(统计)" [nzBordered]="false" class="pie-card" [nzBodyStyle]="{'height': '250px'}" [acl]="['1']">
+            <div nz-row [nzGutter]="4" style="padding:16px 0">
+                <div nz-col [nzSpan]="12">
+                    <admin-chart></admin-chart>
+                </div>
+                <div nz-col [nzSpan]="12">
+                    <admin-chart></admin-chart>
+                    <!-- <g2-bar height="200"  [data]="taskData"></g2-bar> -->
+                </div>
+
+            </div>
+        </nz-card>
+        <nz-card nzTitle="我的任务(统计)" [nzBordered]="false" class="pie-card" [nzBodyStyle]="{'height': '250px'}" [acl]="['2']">
+            <div nz-row [nzGutter]="4" style="padding:16px 0">
+                <div nz-col [nzSpan]="24">
+                    <sample-chart></sample-chart>
+                </div>
+
+            </div>
+        </nz-card>
+    </nz-col>
+    <nz-col nzLg="6">
+        <nz-card nzTitle="我的储存资源" [nzBordered]="false" [nzBodyStyle]="{'height': '250px','text-align': 'center'}">
+            <g2-water-wave title="存储资源剩余" [percent]="34" [height]="140" style="margin: 30px auto;margin-bottom: 10px;"></g2-water-wave>
+            <div>已用空间300G/总空间1T</div>
+        </nz-card>
+
+    </nz-col>
+</nz-row>
+<nz-row>
+    <nz-card nzTitle="我的计算资源" [nzBordered]="false" [nzBodyStyle]="{'height': '250px'}">
+
+    </nz-card>
+</nz-row>
+<nz-row>
+    <nz-card nzTitle="我的任务(未完成任务)" [nzBordered]="false" [nzExtra]="extraTemplate">
+        <nz-tabset [nzType]="'card'" (nzSelectChange)="selectChange(event)">
+            <nz-tab nzTitle="抽提">
+                <simple-table #extract [columns]="columns" [data]="extractData" [loading]="loading" (checkboxChange)="checkboxChange($event)"
+                    (filterChange)="getData()" [noResult]="'暂无数据'" [isPageIndexReset]="false">
+
+                </simple-table>
+            </nz-tab>
+            <nz-tab nzTitle="建库">
+                <simple-table #arcgis [columns]="columns" [data]="arcgisData" [loading]="loading" (checkboxChange)="checkboxChange($event)"
+                    (filterChange)="getData()" [noResult]="'暂无数据'" [isPageIndexReset]="false">
+
+                </simple-table>
+            </nz-tab>
+            <nz-tab nzTitle="测序">
+                <simple-table #sequencing [columns]="columns" [data]="sequencingData" [loading]="loading" (checkboxChange)="checkboxChange($event)"
+                    (filterChange)="getData()" [noResult]="'暂无数据'" [isPageIndexReset]="false">
+
+                </simple-table>
+            </nz-tab>
+            <nz-tab nzTitle="分析">
+                <simple-table #analysis [columns]="anycolumns" [data]="analysisData" [loading]="loading" (checkboxChange)="checkboxChange($event)"
+                    (filterChange)="getData()" [noResult]="'暂无数据'" [isPageIndexReset]="false">
+
+                </simple-table>
+            </nz-tab>
+        </nz-tabset>
+
+    </nz-card>
+    <ng-template #extraTemplate>
+        <a [routerLink]="['/layout/task/exp']">更多>></a>
+    </ng-template>
+</nz-row>

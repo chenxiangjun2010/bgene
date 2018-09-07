@@ -1,0 +1,86 @@
+{
+    "app": {
+        "name": "BGENE"
+    },
+    "api": {
+        "uri": "http://192.168.2.96:8080/api/v1",
+        "imageUri": "http://192.168.2.245/"
+    },
+    "user": {
+        "name": "huangxiaomin",
+        "email": "1219549841@qq.com"
+    },
+    "menu": [
+        {
+            "text": "管理",
+            "group": true,
+            "hideInBreadcrumb": true,
+            "children": [
+                {
+                    "text": "总览",
+                    "i18n": "dashboard",
+                    "icon": "icon-chart",
+                    "link": "/layout/info/mine"
+                },
+                {
+                    "text": "样本管理",
+                    "i18n": "specimen-manage",
+                    "icon": "icon-briefcase",
+                    "link": "/layout/manage/sample"
+                },
+                {
+                    "text": "检测项目管理",
+                    "i18n": "detect-project-manage",
+                    "link": "/layout/manage/project",
+                    "icon": "icon-list"
+                },
+                {
+                    "text": "分析流程管理",
+                    "i18n": "analysis-process-manage",
+                    "icon": "icon-loop",
+                    "children": [
+                        {
+                            "text": "分析流程",
+                            "link": "/layout/manage/pipeline",
+                            "i18n": "分析流程"
+                        }
+                    ]
+                },
+                {
+                    "text": "数据管理",
+                    "i18n": "db-manage",
+                    "icon": "icon-drawer",
+                    "children": [
+                        {
+                            "text": "用户数据管理",
+                            "link": "/layout/manage/data",
+                            "i18n": "data-manage"
+                        },
+                        {
+                            "text": "数据库管理",
+                            "link": "/layout/manage/database",
+                            "i18n": "database-manage"
+                        }
+                    ]
+                },
+                {
+                    "text": "我的任务",
+                    "i18n": "my-task",
+                    "icon": "icon-calculator",
+                    "children": [
+                        {
+                            "text": "实验项目任务",
+                            "link": "/layout/task/exp",
+                            "i18n": "exp-project-task"
+                        },
+                        {
+                            "text": "数据分析任务",
+                            "link": "/layout/task/data",
+                            "i18n": "data-analysis-task"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

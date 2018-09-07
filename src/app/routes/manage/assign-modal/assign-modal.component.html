@@ -1,0 +1,78 @@
+<div *ngIf="_type=='1'">
+  <nz-row nzGutter="8" class="mb-lg">
+    <nz-col [nzSpan]="12"  class="detailName">
+      <i></i>实验任务
+    </nz-col>
+    <nz-col [nzSpan]="12" class="text-right">
+      <span>项目进度:</span>
+      <b class="ml-md">抽提</b>
+    </nz-col>
+  </nz-row>
+  <nz-table #taskTable [nzData]="users" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()"
+    (nzPageSizeChange)="refreshStatus()" nzSize="small">
+    <thead>
+      <tr>
+        <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+        <th>实验人员</th>
+        <th>未处理样本</th>
+        <th>处理中样本</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of taskTable.data">
+        <td nzShowCheckbox [(nzChecked)]="data.checked" [nzDisabled]="data.disabled" (nzCheckedChange)="refreshStatus($event)"></td>
+        <td>{{data.name}}</td>
+        <td>{{data.name}}</td>
+        <td>{{data.name}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <nz-row nzGutter="8" class="mb-lg" *ngIf="_data=='0'">
+    <nz-col nzspan="24" class="detailName">
+      <i></i>样本
+    </nz-col>
+  </nz-row>
+  <nz-table #sampleTable [nzData]="users" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()"
+    (nzPageSizeChange)="refreshStatus()" nzSize="small" *ngIf="_data=='0'">
+    <thead>
+      <tr>
+        <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+        <th>样本编号</th>
+        <th>样本状态</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of sampleTable.data">
+        <td nzShowCheckbox [(nzChecked)]="data.checked" [nzDisabled]="data.disabled" (nzCheckedChange)="refreshStatus($event)"></td>
+        <td>{{data.name}}</td>
+        <td>{{data.name}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+<div *ngIf="_type=='2'">
+  <nz-row nzGutter="8" class="mb-lg">
+    <nz-col nzspan="24" class="detailName">
+      <i></i>分析任务
+    </nz-col>
+  </nz-row>
+  <nz-table #assignleTable [nzData]="users" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()"
+    (nzPageSizeChange)="refreshStatus()" nzSize="small">
+    <thead>
+      <tr>
+        <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+        <th>分析人员</th>
+        <th>未处理检测项目</th>
+        <th>处理中检测项目</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of assignleTable.data">
+        <td nzShowCheckbox [(nzChecked)]="data.checked" [nzDisabled]="data.disabled" (nzCheckedChange)="refreshStatus($event)"></td>
+        <td>{{data.name}}</td>
+        <td>{{data.name}}</td>
+        <td>{{data.name}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>

@@ -1,0 +1,365 @@
+<page-header [title]="'医院，科室及医生信息'">
+
+    <ng-template #tab>
+        <nz-tabset [(nzSelectedIndex)]="pos">
+            <nz-tab *ngFor="let i of tabs" [nzTitle]="i.tab"></nz-tab>
+        </nz-tabset>
+    </ng-template>
+    <!-- <ng-template #extra>
+        <div style="margin-top: -60px; text-align: center; width: 195px;">
+            <img class="img-fluid" src="https://gw.alipayobjects.com/zos/rmsportal/RzwpdLnhmvDJToTdfDPe.png">
+        </div>
+    </ng-template> -->
+    <!-- 段落示意：快速开始进行客户信息的录入
+    <div class="d-flex pt-md">
+        <a class="d-flex pr-lg" (click)="addHospital()">
+            <img class="pr-sm" src="https://gw.alipayobjects.com/zos/rmsportal/MjEImQtenlyueSmVEfUD.svg" />医院开始
+        </a>
+        <a class="d-flex pr-lg" (click)="addDepartment()">
+            <img class="pr-sm" src="https://gw.alipayobjects.com/zos/rmsportal/NbuDUAuBlIApFuDvWiND.svg" />科室开始
+        </a>
+        <a class="d-flex" (click)="addDoctor()">
+            <img class="pr-sm" src="https://gw.alipayobjects.com/zos/rmsportal/ohOEPSYdDTNnyMbGuyLb.svg" />医生开始
+        </a>
+    </div> -->
+</page-header>
+
+<nz-row nzGutter="8">
+    <nz-card [nzBordered]="false" *ngIf="pos==0">
+        <form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form" style="margin-bottom: 0">
+            <nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+                <nz-col nzMd="8" nzSm="24">
+                    <nz-form-item>
+                        <nz-form-label nzFor="hospital">医院</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input [(ngModel)]="hospital" name="hospital" placeholder="请输入" id="no">
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+                <nz-col nzSpan="8">
+                    <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+                    <button nz-button type="reset" (click)="getData()" class="mx-sm">重置</button>
+                </nz-col>
+            </nz-row>
+        </form>
+    </nz-card>
+    <nz-card [nzBordered]="false" *ngIf="pos==1">
+        <form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form" style="margin-bottom: 0">
+            <nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+                <nz-col nzMd="8" nzSm="24">
+                    <nz-form-item>
+                        <nz-form-label nzFor="affiliationHospital">所属医院</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input [(ngModel)]="affiliationHospital" name="affiliationHospital" placeholder="请输入" id="no">
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+                <nz-col nzMd="8" nzSm="24">
+                    <nz-form-item>
+                        <nz-form-label nzFor="departent">科室</nz-form-label>
+                        <nz-form-control>
+                            <nz-select [(ngModel)]="departent" name="departent" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
+                                <nz-option *ngFor="let i of status; let idx = index" [nzLabel]="i.text" [nzValue]="idx"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+                <nz-col nzSpan="8">
+                    <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+                    <button nz-button type="reset" (click)="getData()" class="mx-sm">重置</button>
+                </nz-col>
+            </nz-row>
+        </form>
+    </nz-card>
+
+    <nz-card [nzBordered]="false" *ngIf="pos==2">
+        <form nz-form [nzLayout]="'inline'" (ngSubmit)="getData()" class="search__form" style="margin-bottom: 0">
+            <nz-row [nzGutter]="{ md: 8, lg: 24, xl: 48 }">
+                <nz-col nzMd="8" nzSm="24">
+                    <nz-form-item>
+                        <nz-form-label nzFor="affiliationHospital">所属医院</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input [(ngModel)]="affiliationHospital" name="affiliationHospital" placeholder="请输入" id="no">
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+                <nz-col nzMd="8" nzSm="24">
+                    <nz-form-item>
+                        <nz-form-label nzFor="affiliationDep">所属科室</nz-form-label>
+                        <nz-form-control>
+                            <nz-select [(ngModel)]="affiliationDep" name="affiliationDep" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
+                                <nz-option *ngFor="let i of status; let idx = index" [nzLabel]="i.text" [nzValue]="idx"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+                <nz-col nzMd="8" nzSm="24" *ngIf="expandForm">
+                    <nz-form-item>
+                        <nz-form-label nzFor="doctor">医生</nz-form-label>
+                        <nz-form-control>
+                            <nz-select [(ngModel)]="doctor" name="doctor" [nzPlaceHolder]="'请选择'" [nzShowSearch]="true">
+                                <nz-option *ngFor="let i of status; let idx = index" [nzLabel]="i.text" [nzValue]="idx"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+                <nz-col [nzSpan]="expandForm ? 24 : 8" [class.text-right]="expandForm">
+                    <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+                    <button nz-button type="reset" (click)="getData()" class="mx-sm">重置</button>
+                    <a (click)="expandForm=!expandForm">
+                        {{expandForm ? '收起' : '展开'}}
+                        <i class="anticon" [class.anticon-down]="!expandForm" [class.anticon-up]="expandForm"></i>
+                    </a>
+                </nz-col>
+            </nz-row>
+        </form>
+    </nz-card>
+    <nz-col>
+        <nz-card [nzBordered]="false">
+            <button nz-button (click)="addHospital()" *ngIf="pos==0" [nzType]="'dashed'" class="ant-btn__block mb-sm">
+                <i class="anticon anticon-plus"></i>
+                <span>添加</span>
+            </button>
+            <button nz-button (click)="addDepartment()" *ngIf="pos==1" [nzType]="'dashed'" class="ant-btn__block mb-sm">
+                <i class="anticon anticon-plus"></i>
+                <span>添加</span>
+            </button>
+            <button nz-button (click)="addDoctor()" *ngIf="pos==2" [nzType]="'dashed'" class="ant-btn__block mb-sm">
+                <i class="anticon anticon-plus"></i>
+                <span>添加</span>
+            </button>
+            <nz-list [nzDataSource]="hospitals" [nzLoading]="loading" [nzRenderItem]="item" [nzPagination]="pagination">
+                <ng-template #item let-item>
+                    <nz-list-item [nzContent]="nzContent" [nzActions]="[edit, op]">
+                        <ng-template #edit>
+                            <a (click)="updataHospital(item)">编辑</a>
+                        </ng-template>
+                        <ng-template #op>
+                            <nz-popconfirm [nzTitle]="'确定要删除医院吗？'" (nzOnConfirm)="delHospital(item)" [nzPlacement]="'bottom'">
+                                <a nz-popconfirm>删除</a>
+                            </nz-popconfirm>
+                        </ng-template>
+                        <nz-list-item-meta [nzTitle]="nzTitle" nzDescription={{item.remark}} [nzAvatar]="nzAvatar">
+                            <ng-template #nzTitle>
+                                <a target="_blank">{{item.name}}</a>
+                            </ng-template>
+                            <ng-template #nzAvatar>
+                                <nz-avatar [nzSrc]="'./assets/image/hospital.png'" nzSize="large" [nzShape]="'square'"></nz-avatar>
+                            </ng-template>
+                        </nz-list-item-meta>
+                        <ng-template #nzContent>
+                            <div class="width-md">
+                                <div class="d-flex text-grey-dark">
+                                    <div class="flex-1">
+                                        联系方式
+                                        <p>{{item.phone}}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        地址
+                                        <p>{{item.address}}</p>
+                                    </div>
+                                </div>
+                                <!-- <nz-progress [nzPercent]="item.percent" [nzStatus]="item.status" [nzStrokeWidth]="6"></nz-progress> -->
+                            </div>
+                        </ng-template>
+                    </nz-list-item>
+                </ng-template>
+                <ng-template #pagination>
+                    <nz-pagination [nzTotal]="totalHospital" [nzPageSize]="5" (nzPageIndexChange)="getData()"></nz-pagination>
+                </ng-template>
+            </nz-list>
+        </nz-card>
+    </nz-col>
+    <!-- <nz-col nzSpan="6">
+        <nz-card [nzBordered]="false">
+            <nz-tree [(ngModel)]="nodes" [nzShowLine]="true" [nzDefaultExpandedKeys]="expandKeys" (nzClick)="mouseAction('click',$event)">
+            </nz-tree>
+        </nz-card>
+    </nz-col> -->
+</nz-row>
+
+
+<!-- 新增医院 -->
+<nz-modal [(nzVisible)]="hospitalVisible" [nzTitle]="hospitalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter" (nzOnCancel)="hospitalVisible=false">
+    <ng-template #modalContent>
+        <form nz-form [formGroup]="form">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">医院名称</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input nz-input formControlName="name" placeholder="请输入医院名称">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="7">医院联系方式</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input nz-input formControlName="phone" placeholder="请输入医院联系方式">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">医院地址</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input formControlName="address" nz-input placeholder="请输入医院地址">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">备注</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input formControlName="remark" nz-input placeholder="请输入备注">
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-template>
+    <ng-template #modalFooter>
+        <div nz-row [nzType]="'flex'" [nzJustify]="'center'">
+            <button nz-button [nzType]="'primary'" [disabled]="!form.valid" (click)="submitForm($event,form.value)">提交</button>
+            <button nz-button (click)="resetForm($event)">重置</button>
+        </div>
+    </ng-template>
+</nz-modal>
+
+
+<!-- 新增科室 -->
+<nz-modal [(nzVisible)]="departVisible" [nzTitle]="departTitle" [nzContent]="departContent" [nzFooter]="departFooter" (nzOnCancel)="departVisible=false">
+    <ng-template #departContent>
+        <form nz-form [formGroup]="departmentForm">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">所属医院</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input nz-input formControlName="affiliationHospital" placeholder="请输入医院名称">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="7">科室名称</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input nz-input formControlName="depName" placeholder="请输入医院联系方式">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="7">科室联系方式</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input nz-input formControlName="depLink" placeholder="请输入医院联系方式">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">备注</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input formControlName="depRemark" nz-input placeholder="请输入医院地址">
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-template>
+    <ng-template #departFooter>
+        <div nz-row [nzType]="'flex'" [nzJustify]="'center'">
+            <button nz-button [nzType]="'primary'" [disabled]="!departmentForm.valid" (click)="submitForm($event,departmentForm.value)">提交</button>
+            <button nz-button (click)="resetForm($event)">重置</button>
+        </div>
+    </ng-template>
+</nz-modal>
+<!-- 新增医生 -->
+<nz-modal [(nzVisible)]="doctorVisible" [nzTitle]="doctorTitle" [nzContent]="doctorContent" [nzFooter]="doctorFooter" (nzOnCancel)="doctorVisible=false">
+    <ng-template #doctorContent>
+        <form nz-form [formGroup]="doctorForm">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">所属医院</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input nz-input formControlName="affiliationHospital" placeholder="请输入医院名称">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">
+                    所属科室
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback>
+                    <input nz-input formControlName="affiliationDep" placeholder="请填写科室">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">
+                    医生
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback>
+                    <input nz-input formControlName="doctor" placeholder="请填写医生">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">
+                    联系方式
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback>
+                    <input nz-input formControlName="tel" placeholder="请填写联系方式">
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-template>
+    <ng-template #doctorFooter>
+        <div nz-row [nzType]="'flex'" [nzJustify]="'center'">
+            <button nz-button [nzType]="'primary'" [disabled]="!doctorForm.valid" (click)="submitForm($event,departmentForm.value)">提交</button>
+            <button nz-button (click)="resetForm($event)">重置</button>
+        </div>
+    </ng-template>
+</nz-modal>
+
+<nz-drawer [nzVisible]="drawervisible" [nzClosable]="false" [nzWidth]="640" (nzOnClose)="close()">
+    <p class="title">医院信息</p>
+    <div nz-row>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">医院名称:Lily</p>
+            </div>
+        </div>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">医院地址:AntDesign@example.com</p>
+            </div>
+        </div>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">医院电话:133333333</p>
+            </div>
+        </div>
+    </div>
+    <p class="title">科室信息</p>
+    <div nz-row>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">科室名称:内科</p>HangZhou
+            </div>
+        </div>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">科室电话:0912-18182211</p>China🇨🇳
+            </div>
+        </div>
+    </div>
+    <div nz-row>
+        <div nz-col nzSpan="24">
+            <div class="item-wrap">
+                <p class="label">备注:February 2,1900</p>
+            </div>
+        </div>
+    </div>
+    <p class="title">医生信息</p>
+    <div nz-row>
+
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">医生姓名:Programmer</p>
+            </div>
+        </div>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">医生性别:男</p>
+            </div>
+        </div>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">医生联系电话:177777777</p>
+            </div>
+        </div>
+        <div nz-col nzSpan="24">
+            <div class="item-wrap">
+                <p class="label">备注:Make things as simple as possible but no simpler.</p>
+            </div>
+        </div>
+    </div>
+</nz-drawer>

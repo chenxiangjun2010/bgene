@@ -1,0 +1,198 @@
+<div class="ad-ph">
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a [routerLink]="['']">主页</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>
+      设置
+    </nz-breadcrumb-item>
+  </nz-breadcrumb>
+</div>
+<nz-card [nzBordered]="false">
+  <form nz-form (ngSubmit)="searchByName(true)" [nzLayout]="'inline'" class="search__form">
+    <nz-row [nzGutter]="24">
+      <nz-col [nzSpan]="8">
+        <nz-form-item class="d-flex">
+          <nz-form-label>关键字</nz-form-label>
+          <nz-form-control class="flex-1">
+            <input nz-input [(ngModel)]="searchName" name="searchName" placeholder="请输入">
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col>
+        <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+        <button nz-button type="reset" (click)="searchByName(false)" class="mx-sm">重置</button>
+      </nz-col>
+    </nz-row>
+  </form>
+  <button nz-button (click)="openModal()" [nzType]="'primary'" class="mr-sm mb-md">
+    <i class="anticon anticon-plus"></i>
+    <span>添加人员</span>
+  </button>
+
+  <simple-table #st [columns]="columns" [data]="users" [loading]="loading" (checkboxChange)="checkboxChange($event)" (filterChange)="getData()"
+    [noResult]="'暂无数据'" [isPageIndexReset]="false">
+
+  </simple-table>
+</nz-card>
+<nz-row>
+    <nz-card nzTitle="信息录入" [nzBordered]="false" [nzExtra]="addTemplate">
+        <nz-table #inforTable [nzData]="users" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()"
+            (nzPageSizeChange)="refreshStatus()">
+            <thead>
+                <tr>
+                    <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+                    <th>医院</th>
+                    <th>科室</th>
+                    <th>医生</th>
+                    <th>地址</th>
+                    <th>联系方式</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of inforTable.data">
+                    <td nzShowCheckbox [(nzChecked)]="data.checked" [nzDisabled]="data.disabled" (nzCheckedChange)="refreshStatus($event)"></td>
+                    <td>无锡人民医院</td>
+                    <td>神经科</td>
+                    <td>霍思淼</td>
+                    <td>清扬路</td>
+                    <td>17023112111</td>
+                    <td>
+                        <a (click)="openModal()">编辑</a>
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a (click)="del()">删除</a>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+        <ng-template #addTemplate>
+            <a (click)="openHosModal()">
+                <i class="anticon anticon-plus"></i>信息录入</a>
+        </ng-template>
+    </nz-card>
+</nz-row>
+
+<!-- 新增编辑 -->
+<nz-modal [(nzVisible)]="hosModalVisible" [nzTitle]="hosModalTitle" [nzContent]="hosModalContent" [nzFooter]="hosModalFooter" (nzOnCancel)="hosModalVisible=false">
+    <ng-template #hosModalContent>
+        <form nz-form [formGroup]="hospitalForm">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">
+                    医院
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback>
+                    <input nz-input formControlName="hospital" placeholder="请填写医院">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">
+                    科室
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback>
+                    <input nz-input formControlName="department" placeholder="请填写科室">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">
+                    医生
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback>
+                    <input nz-input formControlName="doctor" placeholder="请填写医生">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">
+                    联系方式
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback>
+                    <input nz-input formControlName="tel" placeholder="请填写联系方式">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">
+                    地址
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback>
+                    <input nz-input formControlName="adress" placeholder="请填写地址">
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-template>
+    <ng-template #hosModalFooter>
+        <div nz-row [nzType]="'flex'" [nzJustify]="'center'">
+            <button nz-button [nzType]="'primary'" [disabled]="!hospitalForm.valid" (click)="submitForm($event,form.value)">提交</button>
+            <button nz-button (click)="resetForm($event)">重置</button>
+        </div>
+    </ng-template>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="modalVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter" (nzOnCancel)="modalVisible=false">
+  <ng-template #modalContent>
+    <form nz-form [formGroup]="form">
+
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          用户名
+        </nz-form-label>
+        <nz-form-control nzHasFeedback [nzSpan]="12">
+          <input nz-input formControlName="useName" placeholder="请填写姓名">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          姓名
+        </nz-form-label>
+        <nz-form-control nzHasFeedback [nzSpan]="12">
+          <input nz-input formControlName="name" placeholder="请填写姓名">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          角色
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="role" placeholder="请填写角色">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          性别
+        </nz-form-label>
+        <nz-form-control nzHasFeedback [nzSpan]="12">
+          <input nz-input formControlName="sex" placeholder="请填写姓名">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          联系方式
+        </nz-form-label>
+        <nz-form-control nzHasFeedback [nzSpan]="12">
+          <input nz-input formControlName="tel" placeholder="请填写姓名">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          密码
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="password" placeholder="请填写性别">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          确认密码
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="repassword" placeholder="请填写联系方式">
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-template>
+  <ng-template #modalFooter>
+    <div nz-row [nzType]="'flex'" [nzJustify]="'center'">
+      <button nz-button [nzType]="'primary'" [disabled]="!form.valid" (click)="submitForm($event,form.value)">提交</button>
+      <button nz-button (click)="resetForm($event)">重置</button>
+    </div>
+  </ng-template>
+</nz-modal>

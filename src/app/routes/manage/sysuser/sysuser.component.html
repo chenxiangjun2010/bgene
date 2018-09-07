@@ -1,0 +1,154 @@
+<div class="ad-ph">
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a [routerLink]="['']">主页</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>
+      个人中心
+    </nz-breadcrumb-item>
+  </nz-breadcrumb>
+</div>
+<nz-card [nzBordered]="false">
+  <div nz-row>
+    <nz-col [nzSpan]="6" class="info">
+      <img src="./assets/image/person.png" alt="个人照片">
+      <a class="d-block  mt-lg" style="margin-left: 60px;" (click)="openModal()">
+        <i class="anticon anticon-edit"></i>更改资料</a>
+    </nz-col>
+    <nz-col [nzSpan]="18">
+     
+        <desc-list size="large"  class="mb-md" [col]="'3'" style="margin-top: 50px">
+            <desc-list-item term="姓名">{{tokenService.get().name}}</desc-list-item>
+            <desc-list-item term="性别">男</desc-list-item>
+            <desc-list-item term="出生年月">1992.10</desc-list-item>
+            <desc-list-item term="角色">
+                <span *ngFor="let item of tokenService.get().roles">{{item | roles}} | </span>
+            </desc-list-item>
+            <desc-list-item term="邮箱">1219549841@qq.com</desc-list-item>
+            <desc-list-item term="手机">17002552311</desc-list-item>
+            <desc-list-item term="地址">江苏无锡</desc-list-item>
+        </desc-list>
+        <!-- <div nz-col [nzXs]="24" [nzSm]="8">
+          <span class="text-grey-dark" style="font-weight: 600;">姓名:</span>
+          <span>{{tokenService.get().name}}</span>
+          <em></em>
+        </div>
+        <div nz-col [nzXs]="24" [nzSm]="8">
+          <span class="text-grey-dark" style="font-weight: 600;">性别:</span>
+          <span>男</span>
+          <em></em>
+        </div>
+        <div nz-col [nzXs]="24" [nzSm]="8">
+          <span class="text-grey-dark" style="font-weight: 600;">出生年月:</span>
+          <span>1992.10</span>
+        </div>
+      </nz-row>
+      <nz-row nzGutter="8" class="mb-md">
+        <div nz-col [nzXs]="24" [nzSm]="8">
+          <span class="text-grey-dark" style="font-weight: 600;">角色:</span>
+          <span *ngFor="let item of tokenService.get().roles">{{item | roles}} | </span>
+          <em></em>
+        </div>
+        <div nz-col [nzXs]="24" [nzSm]="8">
+          <span class="text-grey-dark" style="font-weight: 600;">邮箱:</span>
+          <span>1219549841@qq.com</span>
+          <em></em>
+        </div>
+        <div nz-col [nzXs]="24" [nzSm]="8">
+          <span class="text-grey-dark" style="font-weight: 600;">手机:</span>
+          <span>17002552311</span>
+          <em></em>
+        </div>
+
+      </nz-row>
+      <nz-row nzGutter="8" class="mb-md" style="margin-top:30px;">
+        <div nz-col [nzXs]="24" [nzSm]="8">
+          <span class="text-grey-dark" style="font-weight: 600;">地址:</span>
+          <span>江苏无锡</span>
+        </div>
+      </nz-row> -->
+    </nz-col>
+
+  </div>
+</nz-card>
+<nz-modal [(nzVisible)]="modalVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter" (nzOnCancel)="modalVisible=false">
+  <ng-template #modalContent>
+    <form nz-form [formGroup]="form">
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          姓名
+        </nz-form-label>
+        <nz-form-control nzHasFeedback [nzSpan]="12">
+          <input nz-input formControlName="name" placeholder="请填写姓名">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          性别
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <nz-radio-group formControlName="sex">
+            <label nz-radio nzValue="male">男</label>
+            <label nz-radio nzValue="female">女</label>
+          </nz-radio-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          邮箱
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="email" placeholder="请填写邮箱">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          出生年月
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <!-- <input nz-input formControlName="age" placeholder="请填写年龄"> -->
+          <nz-date-picker formControlName="age" style="display:inline-block; width: 100%;" [nzPlaceHolder]="'请选择出生年月'"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          密码
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="password" placeholder="请填写密码">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          确认密码
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="repassword" placeholder="请确认密码">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          手机
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="tel" placeholder="请填写手机">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          地址
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="adress" placeholder="请填写地址">
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-template>
+  <ng-template #modalFooter>
+    <div nz-row [nzType]="'flex'" [nzJustify]="'center'">
+      <button nz-button [nzType]="'primary'" [disabled]="!form.valid" (click)="submitForm($event,form.value)">提交</button>
+      <button nz-button (click)="resetForm($event)">重置</button>
+    </div>
+  </ng-template>
+</nz-modal>

@@ -1,0 +1,98 @@
+<page-header [title]="'实验结果设置'">
+    <ng-template #breadcrumb>
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                <a [routerLink]="['/layout/info/mine']">主页</a>
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                <a>实验结果设置</a>
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </ng-template>
+</page-header>
+<nz-card [nzBordered]="false">
+    <form nz-form [nzLayout]="'inline'">
+        <standard-form-row [title]="'其它选项'">
+            <nz-row [nzGutter]="16">
+                <nz-col nzXl="8" nzLg="10" nzMd="12" nzSm="24" nzXs="24">
+                    <nz-form-item>
+                        <nz-form-label nzFor="rate">实验类别</nz-form-label>
+                        <nz-form-control>
+                            <nz-select [(ngModel)]="user" name="user" [nzPlaceHolder]="'不限'" [nzShowSearch]="true" style="width: 200px;">
+                                <nz-option [nzLabel]="'抽提'" [nzValue]="'1'"></nz-option>
+                                <nz-option [nzLabel]="'建库'" [nzValue]="'2'"></nz-option>
+                                <nz-option [nzLabel]="'测序 '" [nzValue]="'3'"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+                <nz-col nzXl="8" nzLg="10" nzMd="12" nzSm="24" nzXs="24">
+                    <nz-form-item>
+                        <nz-form-label nzFor="rate">实验类型</nz-form-label>
+                        <nz-form-control>
+                            <nz-select [(ngModel)]="rate" name="rate" [nzPlaceHolder]="'不限'" [nzShowSearch]="true" style="width: 200px;">
+                                <nz-option [nzLabel]="'DNA'" [nzValue]="'1'"></nz-option>
+                                <nz-option [nzLabel]="'RNA'" [nzValue]="'2'"></nz-option>
+                                <nz-option [nzLabel]="'xx'" [nzValue]="'3'"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </nz-col>
+                <nz-col nzXl="8" nzLg="10" nzMd="12" nzSm="24" nzXs="24">
+                    <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+                    <button nz-button type="reset" (click)="searchByName(false)" class="mx-sm">重置</button>
+                </nz-col>
+            </nz-row>
+        </standard-form-row>
+    </form>
+    <standard-form-row [title]="'实验字段'" block style="padding-bottom: 11px;" grid last>
+        <nz-form-item style="margin-bottom: 0">
+            <nz-form-control>
+                <nz-tag class="editable-tag" (click)="openModal(true)">
+                    <i class="anticon anticon-plus"></i> 新增
+                </nz-tag>
+                <nz-tag *ngFor="let i of categories; let idx = index" nzMode="closeable" [nzChecked]="i.value" (nzOnClose)="preventDefault($event,i)"
+                    (click)="openModal(false,i)">
+                    {{i.text}}
+                </nz-tag>
+
+            </nz-form-control>
+        </nz-form-item>
+    </standard-form-row>
+
+</nz-card>
+
+<nz-modal [(nzVisible)]="modalVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" (nzOnCancel)="modalVisible=false"
+    [nzFooter]="modalFooter">
+    <ng-template #modalContent>
+        <form nz-form [formGroup]="form">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">
+                    实验类型
+                </nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <nz-select nzAllowClear nzPlaceHolder="请选择实验类型" formControlName="taskType">
+                        <nz-option *ngFor="let type of taskTypes" nzLabel="{{type.name}}" nzValue="{{type.id}}">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">
+                    字段名称
+                </nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input nz-input formControlName="name" placeholder="请填写字段名称">
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-template>
+
+    <ng-template #modalFooter>
+        <div nz-row [nzType]="'flex'" [nzJustify]="'center'">
+            <button nz-button [nzType]="'primary'" [disabled]="!form.valid" (click)="submitForm($event,form.value)">提交</button>
+            <button nz-button (click)="resetForm($event)">重置</button>
+        </div>
+    </ng-template>
+
+</nz-modal>

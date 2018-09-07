@@ -1,0 +1,224 @@
+<page-header [autoTitle]="false"></page-header>
+
+<nz-card [nzBordered]="false">
+  <form nz-form (ngSubmit)="searchByName(true)" [nzLayout]="'inline'" class="search__form">
+    <nz-row [nzGutter]="24">
+      <nz-col [nzSpan]="8">
+        <nz-form-item class="d-flex">
+          <nz-form-label>关键字</nz-form-label>
+          <nz-form-control class="flex-1">
+            <!-- <input nz-input formControlName="searchName" placeholder="请输入"> -->
+            <input nz-input [(ngModel)]="searchName" name="searchName" placeholder="请输入">
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col>
+        <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+        <button nz-button type="reset" (click)="searchByName(false)" class="mx-sm">重置</button>
+      </nz-col>
+    </nz-row>
+  </form>
+
+  <nz-tabset [nzType]="'card'" (nzSelectChange)="selectChange(event)">
+    <nz-tab nzTitle="原始数据">
+      <nz-upload nzAction="https://jsonplaceholder.typicode.com/posts/" [nzShowUploadList]="false">
+        <button nz-button [nzType]="'primary'" class="mr-sm mb-md">
+          <i class="anticon anticon-upload"></i>
+          <span>上传</span>
+        </button>
+      </nz-upload>
+      <button nz-button [nzType]="'primary'" class="mr-sm mb-md" down-file http-url="./assets/11.svg" file-name="demo中文">
+        <i class="anticon anticon-download"></i>
+        <span>下载</span>
+      </button>
+
+      <!-- <simple-table #st [columns]="columns" [data]="users" [loading]="loading" (checkboxChange)="checkboxChange($event)" (filterChange)="getData()"
+        [noResult]="'暂无数据'" [isPageIndexReset]="false">
+
+      </simple-table> -->
+      <nz-table #nestedTable [nzData]="users" [nzPageSize]="10">
+        <thead>
+          <tr>
+            <th nzShowExpand></th>
+            <th>数据编号</th>
+            <th>数据名称</th>
+            <th>数据描述</th>
+            <th>数据属性</th>
+            <th>样本编号</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+            <tr>
+              <td nzShowExpand [(nzExpand)]="data.expand"></td>
+              <td>{{data.id}}</td>
+              <td>{{data.name}}</td>
+              <td>{{data.size}}</td>
+              <td>{{data.type}}</td>
+              <td>{{data.name}}</td>
+            </tr>
+            <tr [nzExpand]="data.expand">
+              <td></td>
+              <td colspan="7">
+                <nz-table #innerTable [nzData]="users" nzSize="middle" [nzShowPagination]="false">
+                  <thead>
+                    <tr>
+                      <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+                      <th>文件名称</th>
+                      <th>文件大小</th>
+                      <th>创建时间</th>
+                      <th>创建者</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let data of innerTable.data">
+                      <td nzShowCheckbox [(nzChecked)]="data.checked" [nzDisabled]="data.disabled" (nzCheckedChange)="refreshStatus($event)"></td>
+                      <td>{{data.name}}</td>
+                      <td>1m</td>
+                      <td>
+                        {{data.create_time | _date}}
+                      </td>
+                      <td>张三</td>
+                      <td>
+                        <a>删除</a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </nz-table>
+    </nz-tab>
+    <nz-tab nzTitle="检测项目">
+      <button nz-button [nzType]="'primary'" class="mr-sm mb-md" down-file http-url="./assets/11.svg" file-name="demo中文">
+        <i class="anticon anticon-download"></i>
+        <span>下载</span>
+      </button>
+      <nz-table #rowSelectionTable [nzData]="users" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()"
+        (nzPageSizeChange)="refreshStatus()">
+        <thead>
+          <tr>
+            <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+            <th>数据ID</th>
+            <th>检测项目名称</th>
+            <th>文件名称</th>
+            <th>创建时间</th>
+            <th>更新时间</th>
+            <th>创建者</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of rowSelectionTable.data">
+            <td nzShowCheckbox [(nzChecked)]="data.checked" [nzDisabled]="data.disabled" (nzCheckedChange)="refreshStatus($event)"></td>
+            <td>
+              {{data.id}}</td>
+            <td>医学检验</td>
+            <td>
+              {{data.id}}</td>
+            <td>{{data.create_time | _date}}</td>
+            <td>{{data.create_time | _date}}</td>
+            <td>张三</td>
+            <td>
+              <a>删除</a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-tab>
+    <nz-tab nzTitle="结果分析">
+      无
+    </nz-tab>
+  </nz-tabset>
+
+</nz-card>
+<!-- 新增编辑 -->
+<nz-modal [(nzVisible)]="modalVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter" (nzOnCancel)="modalVisible=false"
+  [nzWidth]="800">
+  <ng-template #modalContent>
+    <form nz-form [formGroup]="form">
+      <nz-row nzGutter="8" class="mb-lg">
+        <nz-col nzspan="24" class="detailName">
+          <i></i>检测项目
+        </nz-col>
+      </nz-row>
+
+      <nz-form-item>
+        <nz-form-label nzRequired nzSpan="4">
+          检测项目
+        </nz-form-label>
+        <nz-form-control nzHasFeedback nzSpan="8">
+          <input nz-input formControlName="name" placeholder="请填写组名">
+        </nz-form-control>
+        <nz-form-label nzRequired nzSpan="4">
+          项目名称
+        </nz-form-label>
+        <nz-form-control nzHasFeedback nzSpan="8">
+          <input nz-input formControlName="sex" placeholder="请填写性别">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired nzSpan="4">
+          项目描述
+        </nz-form-label>
+        <nz-form-control nzHasFeedback nzSpan="8">
+          <input nz-input formControlName="age" placeholder="请填写年龄">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-row nzGutter="8" class="mb-lg">
+        <nz-col nzspan="24" class="detailName">
+          <i></i>样本信息
+        </nz-col>
+      </nz-row>
+      <nz-form-item>
+        <button nz-button (click)="addRow()" class="editable-add-btn mb-md">Add</button>
+        <nz-table #editRowTable nzBordered [nzData]="dataSet" [nzShowPagination]="false">
+          <thead>
+            <tr>
+              <th nzWidth="30%">Name</th>
+              <th>Age</th>
+              <th>Address</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of editRowTable.data">
+              <td>
+                <div class="editable-cell">
+                  <div class="editable-cell-text-wrapper">
+                    <ng-container *ngIf="!editCache[data.key].edit">
+                      {{data.name}}
+                      <i class="anticon anticon-edit editable-cell-icon" (click)="startEdit(data.key)"></i>
+                    </ng-container>
+                    <ng-container *ngIf="editCache[data.key].edit">
+                      <input type="text" nz-input [(ngModel)]="editCache[data.key].name">
+                      <i class="anticon anticon-check editable-cell-icon-check" (click)="finishEdit(data.key)"></i>
+                    </ng-container>
+                  </div>
+                </div>
+              </td>
+              <td>{{data.age}}</td>
+              <td>{{data.address}}</td>
+              <td>
+                <nz-popconfirm [nzTitle]="'Sure to delete?'" (nzOnConfirm)="deleteRow(data.key)">
+                  <a nz-popconfirm>Delete</a>
+                </nz-popconfirm>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </nz-form-item>
+    </form>
+  </ng-template>
+  <ng-template #modalFooter>
+    <div nz-row [nzType]="'flex'" [nzJustify]="'center'">
+      <button nz-button [nzType]="'primary'" [disabled]="!form.valid" (click)="submitForm($event,form.value)">提交</button>
+      <button nz-button (click)="resetForm($event)">重置</button>
+    </div>
+  </ng-template>
+</nz-modal>

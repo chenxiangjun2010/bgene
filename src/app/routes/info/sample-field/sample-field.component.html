@@ -1,0 +1,120 @@
+<page-header [title]="'样本字段设置'">
+  <ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a [routerLink]="['/layout/info/mine']">主页</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>样本字段设置</a>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+</page-header>
+<nz-card [nzBordered]="false">
+  <form nz-form [nzLayout]="'inline'">
+    <standard-form-row [title]="'样本类型'" block style="padding-bottom: 11px;">
+      <nz-form-item>
+        <nz-form-control>
+          <tag-select>
+            <nz-tag *ngFor="let i of categories; let idx = index" (nzOnClose)="preventDefault($event,i,'sample')" (click)="openDraw(i)">
+              {{i.label}}
+            </nz-tag>
+          </tag-select>
+        </nz-form-control>
+      </nz-form-item>
+    </standard-form-row>
+    <standard-form-row [title]="'组织类型'">
+      <nz-form-item>
+        <nz-form-control>
+          <nz-tag class="editable-tag" (click)="showInput()">
+            <i class="anticon anticon-plus"></i> 新增
+          </nz-tag>
+          <nz-tag *ngFor="let i of categories1; let idx = index" nzMode="closeable" (nzOnClose)="preventDefault($event,i,'org')" (click)="edit(i)">
+            {{i.text}}
+          </nz-tag>
+        </nz-form-control>
+      </nz-form-item>
+    </standard-form-row>
+    <standard-form-row [title]="'存放容器'" grid last>
+      <nz-form-item>
+        <nz-form-control>
+          <nz-tag class="editable-tag" (click)="openContainer()">
+            <i class="anticon anticon-plus"></i> 新增
+          </nz-tag>
+          <nz-tag *ngFor="let i of categories2; let idx = index" nzMode="closeable" (nzOnClose)="preventDefault($event,i,'container')"
+            (click)="editC(i)">
+            {{i.text}}
+          </nz-tag>
+        </nz-form-control>
+      </nz-form-item>
+    </standard-form-row>
+  </form>
+</nz-card>
+
+<nz-modal [(nzVisible)]="visible" [nzTitle]="type" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+  <nz-form-item style="margin: 0">
+    <nz-form-label nzRequired [nzSpan]="7">
+      类型名
+    </nz-form-label>
+    <nz-form-control nzHasFeedback [nzSpan]="12">
+      <input nz-input [(ngModel)]="name" placeholder="类型名">
+    </nz-form-control>
+  </nz-form-item>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isVisible" [nzTitle]="type" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+  <nz-form-item style="margin: 0">
+    <nz-form-label nzRequired [nzSpan]="7">
+      容器
+    </nz-form-label>
+    <nz-form-control nzHasFeedback [nzSpan]="12">
+      <input nz-input [(ngModel)]="name" placeholder="请填写容器">
+    </nz-form-control>
+  </nz-form-item>
+</nz-modal>
+
+<nz-drawer [nzVisible]="drawervisible" [nzOffsetX]="childrenVisible ? 180 : 0" [nzBodyStyle]="{ height: 'calc(100% - 55px)', overflow: 'auto', 'padding-bottom':'53px' }"
+  [nzTitle]="drawerTitle" [nzClosable]="false" (nzOnClose)="drawervisible=false">
+  <!-- <p class="title">所属样本类型:{{firstField}}</p> -->
+  <form nz-form>
+    <div nz-row>
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label>所属样本类型</nz-form-label>
+          <nz-form-control>
+            {{firstField}}
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label>二级样本类型</nz-form-label>
+          <nz-form-control>
+            <nz-tag>EDTA抗凝</nz-tag>
+            <nz-tag>肝素管抗凝</nz-tag>
+            <nz-tag (click)="openChildren()">+</nz-tag>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+  <div class="footer">
+
+    <button type="button" (click)="drawervisible=false" class="ant-btn" style="margin-right: 8px;">
+      <span>取消</span>
+    </button>
+    <button type="button" (click)="addSecond()" class="ant-btn ant-btn-primary">
+      <span>保存</span>
+    </button>
+  </div>
+
+  <nz-drawer [nzClosable]="false" [nzVisible]="childrenVisible" nzTitle="新增" (nzOnClose)="closeChildren()">
+    <nz-list [nzDataSource]="vegetables" [nzRenderItem]="item">
+      <ng-template #item let-item>
+        <nz-list-item [nzContent]="item"></nz-list-item>
+      </ng-template>
+    </nz-list>
+  </nz-drawer>
+</nz-drawer>

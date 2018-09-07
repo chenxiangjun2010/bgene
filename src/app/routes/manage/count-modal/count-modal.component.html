@@ -1,0 +1,52 @@
+<nz-row nzGutter="8" class="mb-md">
+
+    <nz-col [nzSpan]="8">
+
+        <nz-form-item class="d-flex">
+            <nz-form-label>医院</nz-form-label>
+            <nz-form-control class="flex-1" >
+                <nz-select [(ngModel)]="selectedValue1" style="width: 100%" nzAllowClear nzPlaceHolder="选择医院" class="mr-sm">
+                    <!-- <nz-option nzLabel="全部" nzValue="0"></nz-option> -->
+                    <nz-option nzLabel="无锡人民医院" nzValue="1"></nz-option>
+                    <nz-option nzLabel="无锡人民医院2" nzValue="2"></nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+
+    </nz-col>
+    <nz-col [nzSpan]="8" >
+        <nz-form-item class="d-flex">
+            <nz-form-label>科室</nz-form-label>
+            <nz-form-control class="flex-1" >
+                <nz-select [(ngModel)]="selectedValue2" style="width: 100%" nzAllowClear nzPlaceHolder="选择科室" class="mr-sm">
+                    <!-- <nz-option nzLabel="全部" nzValue="0"></nz-option> -->
+                    <nz-option nzLabel="内科" nzValue="1"></nz-option>
+                    <nz-option nzLabel="外科" nzValue="2"></nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+
+    </nz-col>
+    <nz-col [nzSpan]="8">
+        <nz-form-item class="d-flex">
+            <nz-form-label>医生</nz-form-label>
+            <nz-form-control class="flex-1" >
+                <nz-select [(ngModel)]="selectedValue3" style="width: 100%" nzAllowClear nzPlaceHolder="选择医生" class="mr-sm">
+                    <!-- <nz-option nzLabel="全部" nzValue="0"></nz-option> -->
+                    <nz-option nzLabel="张医生" nzValue="1"></nz-option>
+                    <nz-option nzLabel="李医生" nzValue="2"></nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+
+    </nz-col>
+    <nz-col [nzSpan]="8">
+        <nz-form-item class="d-flex">
+            <nz-form-label>时间</nz-form-label>
+            <nz-form-control class="flex-1">
+                <nz-range-picker [(ngModel)]="date_range" ></nz-range-picker>
+            </nz-form-control>
+        </nz-form-item>
+    </nz-col>
+</nz-row>
+<g2-bar height="200" [data]="salesData"></g2-bar>

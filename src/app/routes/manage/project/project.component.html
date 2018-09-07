@@ -1,0 +1,284 @@
+<page-header [title]="'检测项目管理'">
+  <ng-template #tab>
+    <nz-tabset [(nzSelectedIndex)]="pos">
+      <nz-tab *ngFor="let i of tabs" [nzTitle]="i.tab" (nzSelect)="to(i)"></nz-tab>
+    </nz-tabset>
+  </ng-template>
+</page-header>
+<nz-card [nzBordered]="false" *ngIf="pos=='0'">
+  <form nz-form (ngSubmit)="searchByName(true)" [nzLayout]="'inline'" class="search__form">
+    <nz-row [nzGutter]="24">
+      <nz-col [nzSpan]="8">
+        <nz-form-item class="d-flex">
+          <nz-form-label>项目名称</nz-form-label>
+          <nz-form-control class="flex-1">
+            <input nz-input [(ngModel)]="searchName" name="searchName" placeholder="请输入项目名称">
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzSpan]="8">
+        <nz-form-item class="d-flex">
+          <nz-form-label>项目状态</nz-form-label>
+          <nz-form-control class="flex-1">
+            <nz-select [(ngModel)]="process" name="process" nzAllowClear nzPlaceHolder="项目状态选择" class="mr-sm">
+              <nz-option nzLabel="未处理" nzValue="0"></nz-option>
+              <nz-option nzLabel="进行中" nzValue="1"></nz-option>
+              <nz-option nzLabel="已完成" nzValue="2"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col>
+        <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+        <button nz-button type="reset" (click)="searchByName(false)" class="mx-sm">重置</button>
+      </nz-col>
+    </nz-row>
+  </form>
+
+  <button nz-button (click)="open()" [nzType]="'primary'" class="mr-sm">
+    <i class="anticon anticon-plus"></i>
+    <span>新建</span>
+  </button>
+  <button nz-button (click)="openChart()" [nzType]="'primary'" class="mr-sm">
+    <i class="anticon anticon-dashboard"></i>
+    <span>显示统计</span>
+  </button>
+
+  <ng-container *ngIf="selectedRows.length > 1">
+    <nz-popconfirm [nzTitle]="'注意：删除底库时会删除与之关联的人像'" (nzOnConfirm)="batchDel()" [nzPlacement]="'bottom'">
+      <button nz-popconfirm nz-button>批量删除</button>
+    </nz-popconfirm>
+  </ng-container>
+  <div class="my-md">
+    <nz-alert [nzType]="'info'" [nzShowIcon]="true" [nzMessage]="message">
+      <ng-template #message>
+        已选择
+        <strong class="text-primary">{{selectedRows.length}}</strong> 项&nbsp;&nbsp;
+        <a *ngIf="totalCallNo > 0" (click)="st.clearCheck()" class="ml-lg">清空</a>
+      </ng-template>
+    </nz-alert>
+  </div>
+  <simple-table [columns]="columns" [data]="users" [loading]="loading" (checkboxChange)="checkboxChange($event)" (filterChange)="getData()"
+    [noResult]="'暂无数据'" [isPageIndexReset]="false" [pagePlacement]="'center'">
+
+  </simple-table>
+</nz-card>
+
+<nz-card *ngIf="pos=='1'">
+  <form nz-form (ngSubmit)="searchByName(true)" [nzLayout]="'inline'" class="search__form">
+    <nz-row [nzGutter]="24">
+      <nz-col [nzSpan]="8">
+        <nz-form-item class="d-flex">
+          <nz-form-label>检测项目编号</nz-form-label>
+          <nz-form-control class="flex-1">
+            <input nz-input [(ngModel)]="programID" name="programID" placeholder="请输入检测项目编号">
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzSpan]="8">
+        <nz-form-item class="d-flex">
+          <nz-form-label>检测项目名称</nz-form-label>
+          <nz-form-control class="flex-1">
+            <input nz-input [(ngModel)]="programName" name="programName" placeholder="请输入检测项目名称">
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzSpan]="8" *ngIf="expandForm">
+        <nz-form-item class="d-flex">
+          <nz-form-label>样本状态</nz-form-label>
+          <nz-form-control class="flex-1">
+            <input nz-input [(ngModel)]="programName" name="programName" placeholder="请输入样本状态">
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+      <nz-col [nzSpan]="expandForm ? 24 : 8" class="mb-md" [class.text-right]="expandForm">
+        <button nz-button type="submit" [nzType]="'primary'" [nzLoading]="loading">查询</button>
+        <button nz-button type="reset" (click)="searchByName(false)" class="mx-sm">重置</button>
+        <a (click)="expandForm=!expandForm">
+          {{expandForm ? '收起' : '展开'}}
+          <i class="anticon" [class.anticon-down]="!expandForm" [class.anticon-up]="expandForm"></i>
+      </a>
+      </nz-col>
+    </nz-row>
+  </form>
+  <ng-container>
+    <nz-popconfirm [nzTitle]="'注意：样本将分配进入你的实验'" (nzOnConfirm)="batchDel()" [nzPlacement]="'bottom'">
+      <button nz-popconfirm nz-button [nzType]="'primary'">批量分配</button>
+    </nz-popconfirm>
+  </ng-container>
+  <div class="my-md">
+    <nz-alert [nzType]="'info'" [nzShowIcon]="true" [nzMessage]="message">
+      <ng-template #message>
+        已选择
+        <strong class="text-primary">{{selectedRows.length}}</strong> 项&nbsp;&nbsp;
+      </ng-template>
+    </nz-alert>
+  </div>
+  <simple-table [columns]="sampleColumns" [data]="users" [loading]="loading" (checkboxChange)="checkboxChange($event)" (filterChange)="getData()"
+    [noResult]="'暂无数据'" [isPageIndexReset]="false" [pagePlacement]="'center'">
+    <ng-template st-row="status" let-i>
+      <nz-badge *ngIf="i.status=='0'" [nzStatus]="'success'" [nzText]="'已完成'"></nz-badge>
+      <nz-badge *ngIf="i.status=='1'" [nzStatus]="'processing'" [nzText]="'进行中'"></nz-badge>
+      <nz-badge *ngIf="i.status=='2'" [nzStatus]="'default'" [nzText]="'未开始'"></nz-badge>
+    </ng-template>
+  </simple-table>
+</nz-card>
+
+<!-- 新增编辑 -->
+<nz-drawer [nzClosable]="false" [nzOffsetX]="childrenVisible ? 180 : 0" [nzWidth]="640" [nzVisible]="visible" [nzTitle]="modalTitle"
+  (nzOnClose)="close()">
+  <form nz-form [formGroup]="form">
+    <nz-row nzGutter="8" class="mb-lg">
+      <nz-col [nzSpan]="12" class="detailName">
+        <i></i>检测项目
+      </nz-col>
+    </nz-row>
+
+    <nz-form-item>
+      <nz-form-label nzRequired nzSpan="4">
+        检测项目
+      </nz-form-label>
+      <nz-form-control nzHasFeedback nzSpan="8">
+        <nz-select formControlName="detection" nzAllowClear nzPlaceHolder="选择">
+          <nz-option *ngFor="let option of detection" [nzValue]="option.vaule" [nzLabel]="option.label"></nz-option>
+        </nz-select>
+      </nz-form-control>
+      <nz-form-label nzRequired nzSpan="4">
+        项目名称
+      </nz-form-label>
+      <nz-form-control nzHasFeedback nzSpan="8">
+        <input nz-input formControlName="name" placeholder="请填写项目名称">
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label nzRequired nzSpan="4">
+        类型
+      </nz-form-label>
+      <nz-form-control nzHasFeedback nzSpan="8">
+        <input nz-input formControlName="type" placeholder="请填写类型">
+      </nz-form-control>
+      <nz-form-label nzRequired nzSpan="4">
+        备注
+      </nz-form-label>
+      <nz-form-control nzHasFeedback nzSpan="8">
+        <textarea nz-input formControlName="remark" placeholder="请填写项目描述" [nzAutosize]="{ minRows: 2, maxRows: 6 }"></textarea>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzSpan="4">
+        送检图凭证
+      </nz-form-label>
+      <nz-form-control nzHasFeedback nzSpan="8">
+        <nz-upload [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload">
+          <button nz-button>
+            <i class="anticon anticon-upload"></i>
+            <span>上传文件</span>
+          </button>
+        </nz-upload>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-divider nzDashed class="my-md"></nz-divider>
+    <nz-row nzGutter="8" class="mb-lg">
+      <!-- <nz-col [nzSpan]="12" class="detailName">
+        <i></i>已选样本
+      </nz-col> -->
+      <nz-tabset [(nzSelectedIndex)]="addPos">
+        <nz-tab nzTitle="已选样本" class="detailName">
+        </nz-tab>
+        <nz-tab nzTitle="已选数据" class="detailName">
+        </nz-tab>
+    </nz-tabset>
+        <button nz-button (click)="openChildren()" class="mr-sm" style="float: right;">
+          <span>添加</span>
+        </button> 
+    </nz-row>
+    <nz-form-item>
+
+      <simple-table *ngIf="addPos == 0" [columns]="selectedSampleColumns" [data]="chooseSamples" [loading]="loading" (checkboxChange)="checkboxChange($event)"
+        (filterChange)="getData()" [noResult]="'暂无数据'" [isPageIndexReset]="false" [pagePlacement]="'center'" size="small">
+      </simple-table>
+
+      <simple-table *ngIf="addPos == 1" [columns]="selectedDatasColumns" [data]="chooseDatas" [loading]="loading" (checkboxChange)="checkboxChange($event)"
+        (filterChange)="getData()" [noResult]="'暂无数据'" [isPageIndexReset]="false" [pagePlacement]="'center'" size="small">
+      </simple-table>
+    </nz-form-item>
+  </form>
+  <div class="footer">
+    <button type="button" (click)="close()" class="ant-btn" style="margin-right: 8px;">
+      <span>取消</span>
+    </button>
+    <button type="button" (click)="submitForm($event,form.value)" class="ant-btn ant-btn-primary">
+      <span>提交</span>
+    </button>
+  </div>
+  <nz-drawer [nzClosable]="false" [nzVisible]="childrenVisible" nzTitle="可选样本" (nzOnClose)="closeChildren()" [nzWidth]="640">
+    <nz-input-group nzCompact class="mb-lg text-center">
+      <input [(ngModel)]="name" [placeholder]="placeholder" style="width: 50%;" nz-input>
+      <nz-select [(ngModel)]="origin" style="width:20%;" (ngModelChange)="originChange()">
+        <nz-option nzLabel="样本" nzValue="0"></nz-option>
+        <nz-option nzLabel="数据" nzValue="1"></nz-option>
+      </nz-select>
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        <span>搜索</span>
+      </button>
+    </nz-input-group>
+
+    <simple-table [columns]="chooseSampleColumns" [data]="unselectedSamples" [loading]="loading" (checkboxChange)="checkboxChange($event)"
+      (filterChange)="getData()" [noResult]="'暂无数据'" [isPageIndexReset]="false" [pagePlacement]="'center'" size="small" *ngIf="origin=='0'">
+
+      <ng-template st-row="select" let-i>
+        <nz-select [(ngModel)]="i.property" [name]="i.property" style="width: 150px;" nzPlaceHolder="请选择样本类型" class="mr-sm">
+          <nz-option nzLabel="对照" nzValue="对照"></nz-option>
+          <nz-option nzLabel="肿瘤" nzValue="肿瘤"></nz-option>
+        </nz-select>
+      </ng-template>
+    </simple-table>
+
+    <simple-table [columns]="chooseDataColumns" [data]="unselectedDatas" [loading]="loading" (checkboxChange)="checkboxChange($event)"
+      (filterChange)="getData()" [noResult]="'暂无数据'" [isPageIndexReset]="false" [pagePlacement]="'center'" size="small" *ngIf="origin=='1'">
+      <ng-template st-row="select" let-i>
+        <nz-select [(ngModel)]="i.property" [name]="i.property" style="width: 150px;" nzPlaceHolder="请选择数据类型" class="mr-sm">
+          <nz-option nzLabel="对照" nzValue="对照"></nz-option>
+          <nz-option nzLabel="肿瘤" nzValue="肿瘤"></nz-option>
+        </nz-select>
+      </ng-template>
+    </simple-table>
+    <div class="footer">
+      <button type="button" (click)="cancelChildren()" class="ant-btn" style="margin-right: 8px;">
+        <span>取消</span>
+      </button>
+      <button type="button" (click)="closeChildren()" class="ant-btn ant-btn-primary">
+        <span>确定</span>
+      </button>
+    </div>
+  </nz-drawer>
+
+</nz-drawer>
+<!-- 样本数量 -->
+<nz-modal [(nzVisible)]="sampleModalVisible" [nzTitle]="sampleModalTitle" [nzContent]="sampleModalContent" [nzFooter]="null"
+  (nzOnCancel)="sampleModalVisible=false">
+  <ng-template #sampleModalContent>
+    <nz-form-item>
+      <nz-table #mySampleTable [nzData]="users" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()"
+        (nzPageSizeChange)="refreshStatus()" nzSize="small" [nzHideOnSinglePage]="'true'">
+        <thead>
+          <tr>
+            <!-- <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th> -->
+            <th class="text-center">样本编号</th>
+            <th class="text-center">数据编号</th>
+            <th class="text-center">属性</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of mySampleTable.data">
+            <!-- <td nzShowCheckbox [(nzChecked)]="data.checked" [nzDisabled]="data.disabled" (nzCheckedChange)="refreshStatus($event)"></td> -->
+            <td class="text-center">{{data.name}}</td>
+            <td class="text-center">{{data.name}}</td>
+            <td class="text-center">{{data.name}}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-form-item>
+  </ng-template>
+</nz-modal>

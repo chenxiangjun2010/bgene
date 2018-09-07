@@ -1,0 +1,132 @@
+<page-header [title]="'冰箱管理'">
+  <ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a [routerLink]="['/layout/info/mine']">主页</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>冰箱管理</a>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+  <!-- <ng-template #extra>
+        <div style="margin-top: -60px; text-align: center; width: 195px;">
+            <img class="img-fluid" src="https://gw.alipayobjects.com/zos/rmsportal/RzwpdLnhmvDJToTdfDPe.png">
+        </div>
+    </ng-template> -->
+  <!-- 可以是一些介绍，关于这个界面怎么操作等等啥的 -->
+</page-header>
+
+<nz-card [nzBordered]="false">
+  <form nz-form [nzLayout]="'inline'">
+    <standard-form-row [title]="'冰箱信息'" grid last>
+      <nz-row [nzGutter]="16">
+        <nz-col nzXl="8" nzLg="10" nzMd="12" nzSm="24" nzXs="24">
+          <nz-form-item class="d-flex">
+            <nz-form-label nzFor="hospital">冰箱编号</nz-form-label>
+            <nz-form-control class="flex-1">
+              <input nz-input [(ngModel)]="searchName" name="searchName" placeholder="请输入">
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+        <button nz-button [nzType]="'primary'" [nzLoading]="loading" (click)="submitForm($event,searchForm.value)">查询</button>
+      </nz-row>
+    </standard-form-row>
+  </form>
+</nz-card>
+<nz-list [nzLoading]="loading" [nzDataSource]="hospitals" [nzRenderItem]="item" [nzGrid]="{gutter: 24, lg: 8, md: 12, sm: 24, xs: 24 }">
+  <ng-template #item let-item>
+    <nz-list-item>
+      <button *ngIf="item === null" nz-button (click)="openModal()" [nzType]="'dashed'" style="width: 100%; height: 183px;">
+        <i class="anticon anticon-plus"></i>
+        <span>新增冰箱</span>
+      </button>
+      <nz-card nzHoverable *ngIf="item !== null" [nzActions]="[op1,op2]">
+        <ng-template #op1>
+          <a (click)="addBox(true)">新增</a>
+        </ng-template>
+        <ng-template #op2>
+          <a (click)="addBox(false)">修改</a>
+        </ng-template>
+        <nz-card-meta [nzAvatar]="nzAvatar" [nzTitle]="nzTitle" [nzDescription]="nzDescription">
+          <ng-template #nzAvatar>
+              <i class="anticon anticon-medicine-box bg-error text-white" style="font-size: 16px"></i>
+          </ng-template>
+          <ng-template #nzTitle>
+            <a (click)="msg.success('标题：' + item.id);">冰箱1</a>
+          </ng-template>
+          <ng-template #nzDescription>
+            <!-- <ellipsis>{{item.description}}</ellipsis> -->
+            <desc-list size="large" [col]="2">
+              <desc-list-item term="冰箱层数">1</desc-list-item>
+              <desc-list-item term="样本盒数量">2</desc-list-item>
+              <desc-list-item term="样本数目">2</desc-list-item>
+              <desc-list-item term="是否剩余">剩余</desc-list-item>
+            </desc-list>
+          </ng-template>
+        </nz-card-meta>
+      </nz-card>
+    </nz-list-item>
+  </ng-template>
+</nz-list>
+
+<!-- 新建冰箱 -->
+<nz-modal [(nzVisible)]="iceModalVisible" [nzTitle]="'新增'" [nzContent]="iceMmodalContent" [nzFooter]="iceModalFooter" (nzOnCancel)="iceModalVisible=false">
+  <ng-template #iceMmodalContent>
+    <form nz-form [formGroup]="form">
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          冰箱编号
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="name" placeholder="请填写冰箱编号">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          冰箱层数
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="cell" placeholder="请填写冰箱层数">
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-template>
+  <ng-template #iceModalFooter>
+    <div nz-row [nzType]="'flex'" [nzJustify]="'center'">
+      <button nz-button [nzType]="'primary'">提交</button>
+      <button nz-button>重置</button>
+    </div>
+  </ng-template>
+</nz-modal>
+
+
+<!-- 新建盒子 -->
+<nz-modal [(nzVisible)]="boxModalVisible" [nzTitle]="modalTitle" [nzContent]="boxMmodalContent" [nzFooter]="boxModalFooter" (nzOnCancel)="boxModalVisible=false">
+  <ng-template #boxMmodalContent>
+    <form nz-form [formGroup]="boxform">
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          样本盒编号
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="code" placeholder="请填写样本盒编号">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="7">
+          样本量
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input formControlName="sum" placeholder="请填写样本量">
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-template>
+  <ng-template #boxModalFooter>
+    <div nz-row [nzType]="'flex'" [nzJustify]="'center'">
+      <button nz-button [nzType]="'primary'">提交</button>
+      <button nz-button>重置</button>
+    </div>
+  </ng-template>
+</nz-modal>

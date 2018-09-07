@@ -1,0 +1,238 @@
+<!-- <div class="ad-ph">
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a [routerLink]="['']">主页</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>
+      <a [routerLink]="['/layout/manage/project']">检测项目管理</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>
+      检测项目详情
+    </nz-breadcrumb-item>
+  </nz-breadcrumb>
+  <nz-row nzGutter="8">
+    <nz-col nzSpan="20">
+      <desc-list size="large" title="检测项目详情" class="mb-md" [col]="'3'">
+        <desc-list-item term="检测项目">血液检测</desc-list-item>
+        <desc-list-item term="项目名称">血液检测</desc-list-item>
+        <desc-list-item term="项目描述">血液检测</desc-list-item>
+      </desc-list>
+    </nz-col>
+    <nz-col nzSpan="4">
+      <img src="https://gw.alipayobjects.com/zos/rmsportal/HrxcVbrKnCJOZvtzSqjN.png" alt="">
+    </nz-col>
+  </nz-row>
+</div> -->
+<page-header [autoTitle]="false">
+  <ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a [routerLink]="['/layout/info/mine']">主页</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a [routerLink]="['/layout/manage/project']">检测项目管理</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        检测项目详情
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+  <ng-template #extra>
+    <div style="margin-top: -40px; text-align: center; width: 195px;">
+        <a class="example-image-link" href="https://gw.alipayobjects.com/zos/rmsportal/RzwpdLnhmvDJToTdfDPe.png" data-lightbox="example-1">
+            <img class="img-fluid example-image" src="https://gw.alipayobjects.com/zos/rmsportal/RzwpdLnhmvDJToTdfDPe.png">
+            <!-- <img width="120px" class="example-image" [src]="config.getConfig('imageUri')+item.capture_faceUrl" alt="image-1" /> -->
+        </a>
+      
+    </div>
+  </ng-template>
+  <div class="d-flex pt-md">
+    <desc-list size="large" title="检测项目详情" class="mb-md" [col]="'3'">
+      <desc-list-item term="检测项目">血液检测</desc-list-item>
+      <desc-list-item term="项目名称">血液检测</desc-list-item>
+      <desc-list-item term="项目描述">血液检测</desc-list-item>
+    </desc-list>
+  </div>
+</page-header>
+
+<nz-card [nzBordered]="false">
+  <nz-tabset [nzType]="'card'" [(nzSelectedIndex)]="pos" (nzSelectChange)="change($event)">
+    <nz-tab nzTitle="抽提">
+      <!-- <nz-table #extractTable [nzData]="users" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()"
+        (nzPageSizeChange)="refreshStatus()">
+        <thead>
+          <tr>
+            <th>样本编号</th>
+            <th>实验编号</th>
+            <th>实验状态</th>
+            <th>创建时间</th>
+            <th>开始时间</th>
+            <th>完成时间</th>
+            <th>实验人员</th>
+            <th>实验报告编号</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of extractTable.data">
+            <td>{{data.id}}</td>
+            <td>{{data.code}}</td>
+            <td>{{data.type}}</td>
+            <td>{{data.time | _date}}</td>
+            <td>{{data.time | _date}} </td>
+            <td>{{data.time | _date}}</td>
+            <td>{{data.name}}</td>
+            <td>{{data.code}}</td>
+          </tr>
+        </tbody>
+      </nz-table> -->
+    </nz-tab>
+    <nz-tab nzTitle="建库">
+      <!-- <nz-table #arcgisTable [nzData]="users" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()"
+        (nzPageSizeChange)="refreshStatus()">
+        <thead>
+          <tr>
+              <th>样本编号</th>
+              <th>实验编号</th>
+              <th>实验状态</th>
+              <th>创建时间</th>
+              <th>开始时间</th>
+              <th>完成时间</th>
+              <th>实验人员</th>
+              <th>实验报告编号</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of arcgisTable.data">
+              <td>{{data.id}}</td>
+              <td>{{data.code}}</td>
+              <td>{{data.type}}</td>
+              <td>{{data.time | _date}}</td>
+              <td>{{data.time | _date}} </td>
+              <td>{{data.time | _date}}</td>
+              <td>{{data.name}}</td>
+              <td>{{data.code}}</td>
+          </tr>
+        </tbody>
+      </nz-table> -->
+    </nz-tab>
+    <nz-tab nzTitle="测序">
+      <!-- <nz-table #sequencingTable [nzData]="users" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()"
+        (nzPageSizeChange)="refreshStatus()">
+        <thead>
+          <tr>
+              <th>样本编号</th>
+              <th>实验编号</th>
+              <th>实验状态</th>
+              <th>创建时间</th>
+              <th>开始时间</th>
+              <th>完成时间</th>
+              <th>实验人员</th>
+              <th>实验报告编号</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of sequencingTable.data">
+              <td>{{data.id}}</td>
+              <td>{{data.code}}</td>
+              <td>{{data.type}}</td>
+              <td>{{data.time | _date}}</td>
+              <td>{{data.time | _date}} </td>
+              <td>{{data.time | _date}}</td>
+              <td>{{data.name}}</td>
+              <td>{{data.code}}</td>
+          </tr>
+        </tbody>
+      </nz-table> -->
+    </nz-tab>
+    <nz-tab nzTitle="分析">
+      <nz-row [nzGutter]="24">
+        <nz-col [nzSpan]="4">
+          <nz-card class="ant-card__body-nopadding">
+            <a (click)="getTools(i)" *ngFor="let analy of analysis; let i = index" class="d-block py-sm px-md" [ngClass]="{'bg-primary-light text-white':active==i}">{{analy.name}}</a>
+          </nz-card>
+        </nz-col>
+        <nz-col nzSpan="20">
+          <nz-tabset>
+            <nz-tab nzTitle="结果文件">
+              <button nz-button [nzType]="'primary'" class="mr-sm my-md">
+                <i class="anticon anticon-plus"></i>
+                <span>下载</span>
+              </button>
+              <simple-table [columns]="columns3" [data]="files" [loading]="loading" (checkboxChange)="checkboxChange($event)" (filterChange)="getData()"
+                [noResult]="'暂无数据'" [isPageIndexReset]="false">
+
+              </simple-table>
+            </nz-tab>
+            <nz-tab nzTitle="进程监控">
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <td>进程号:</td>
+                    <td>文件大小:</td>
+                  </tr>
+                  <tr>
+                    <td>创建时间:</td>
+                    <td>开始时间:</td>
+                  </tr>
+                  <tr>
+                    <td>结束时间:</td>
+                    <td>运行耗时:</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">使用命令:
+                      <button nz-button nzType="primary" class="ml-md">查看</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <nz-row>
+                <nz-col nzSpan="16">
+                  <nz-col nzSpan="24" class="detailName mb-md">
+                    <i></i>日志信息
+                  </nz-col>
+                  <div class="log">
+
+                  </div>
+                </nz-col>
+                <nz-col nzSpan="1"></nz-col>
+                <nz-col nzSpan="7">
+                  <nz-col nzSpan="24" class="detailName mb-md">
+                    <i></i>系统信息
+                  </nz-col>
+                  <div>
+                    <div>
+                      <button nz-button [nzType]="'primary'" class="mr-sm mb-md">
+                        <i class="anticon anticon-plus"></i>
+                        <span>CPU信息</span>
+                      </button>
+                    </div>
+                    <div>
+                      <button nz-button [nzType]="'primary'" class="mr-sm mb-md">
+                        <i class="anticon anticon-plus"></i>
+                        <span>内存信息</span>
+                      </button>
+                    </div>
+                    <div>
+                      <button nz-button [nzType]="'primary'" class="mr-sm mb-md">
+                        <i class="anticon anticon-plus"></i>
+                        <span>IO信息</span>
+                      </button>
+                    </div>
+                  </div>
+                </nz-col>
+              </nz-row>
+            </nz-tab>
+            <nz-tab nzTitle="报告页面">
+              Content of Tab Pane 3
+            </nz-tab>
+          </nz-tabset>
+
+        </nz-col>
+      </nz-row>
+    </nz-tab>
+  </nz-tabset>
+  <simple-table [columns]="columns" [data]="users" [loading]="loading" (checkboxChange)="checkboxChange($event)" (filterChange)="getData()"
+    [noResult]="'暂无数据'" [isPageIndexReset]="false" *ngIf="pos<3">
+  </simple-table>
+</nz-card>

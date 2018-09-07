@@ -1,0 +1,162 @@
+<page-header [title]="'组织架构管理'">
+    <ng-template #breadcrumb>
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                <a [routerLink]="['/layout/info/mine']">主页</a>
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                <a>组织架构管理</a>
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </ng-template>
+</page-header>
+<nz-card [nzBordered]="false" nzTitle="成员管理">
+    <button nz-button (click)="openModal(true)" [nzType]="'dashed'" class="ant-btn__block mb-sm">
+        <i class="anticon anticon-plus"></i>
+        <span>添加人员</span>
+    </button>
+    <simple-table [columns]="columns" [pagePlacement]="'center'" [showQuickJumper]="true" [data]="users" [loading]="loading"
+        (checkboxChange)="checkboxChange($event)" (filterChange)="getData()" [noResult]="'暂无数据'">
+        <ng-template st-row="name" type="title" let-n>
+            {{ n.title }}
+            <nz-dropdown nzTrigger="click" [nzClickHide]="false">
+                <i class="anticon anticon-search ant-table-filter-icon" nz-dropdown></i>
+                <div class="ant-table-filter-dropdown p-sm">
+                    <input type="text" nz-input placeholder="Search name" [(ngModel)]="searchValue" class="width-sm mr-sm">
+                    <button nz-button [nzType]="'primary'" (click)="st.load(2)">Search</button>
+                </div>
+            </nz-dropdown>
+        </ng-template>
+        <ng-template st-row="name" let-item>
+            <nz-tooltip [nzTitle]="item.name">
+                <span nz-tooltip>{{item.name}}</span>
+            </nz-tooltip>
+        </ng-template>
+    </simple-table>
+
+</nz-card>
+<nz-modal [(nzVisible)]="modalVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter" (nzOnCancel)="modalVisible=false">
+    <ng-template #modalContent>
+        <form nz-form [formGroup]="form">
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">姓名</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input nz-input formControlName="name" placeholder="输入姓名">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="7">工号</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input nz-input formControlName="no" placeholder="输入工号">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">角色</nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback>
+                    <nz-select nzMode="multiple" nzPlaceHolder="选择角色" formControlName="role">
+                        <nz-option *ngFor="let option of roles" [nzLabel]="option.value" [nzValue]="option.id"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label [nzSpan]="7">性别</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <nz-select nzPlaceHolder="选择性别" formControlName="gender" nzAllowClear>
+                        <nz-option *ngFor="let option of genders" [nzLabel]="option.value" [nzValue]="option.id"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">联系方式</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input formControlName="telephone" nz-input placeholder="输入联系方式">
+                    <nz-form-explain *ngIf="telephone.dirty && telephone.errors">请输入手机号！</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">密码</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input nz-input type="password" formControlName="password" placeholder="至少6位密码，区分大小写">
+                    <nz-form-explain *ngIf="password.dirty && password.errors">请输入密码！</nz-form-explain>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired [nzSpan]="7">确认密码</nz-form-label>
+                <nz-form-control nzHasFeedback [nzSpan]="12">
+                    <input nz-input type="password" formControlName="confirmpassword" placeholder="确认密码">
+                    <ng-container *ngIf="confirmpassword.dirty && confirmpassword.errors">
+                        <nz-form-explain *ngIf="confirmpassword.errors?.required">请确认密码！</nz-form-explain>
+                        <nz-form-explain *ngIf="confirmpassword.errors?.equar">两次输入的密码不匹配！</nz-form-explain>
+                    </ng-container>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-template>
+    <ng-template #modalFooter>
+        <div nz-row [nzType]="'flex'" [nzJustify]="'center'">
+            <button nz-button [nzType]="'primary'" [disabled]="!form.valid" (click)="submitForm($event,form.value)">提交</button>
+            <button nz-button (click)="resetForm($event)">重置</button>
+        </div>
+    </ng-template>
+</nz-modal>
+
+<nz-drawer [nzVisible]="drawervisible" [nzWidth]="640" [nzClosable]="false" (nzOnClose)="close()">
+    <p class="title">成员信息</p>
+    <div nz-row>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">姓名:</p>Lily
+            </div>
+        </div>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">工号:</p>AntDesign@example.com
+            </div>
+        </div>
+    </div>
+    <div nz-row>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">角色:</p>HangZhou
+            </div>
+        </div>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">性别:</p>China🇨🇳
+            </div>
+        </div>
+    </div>
+    <div nz-row>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">联系方式:</p>February 2,1900
+            </div>
+        </div>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">Website:</p>-
+            </div>
+        </div>
+    </div>
+    <div nz-row>
+        <div nz-col nzSpan="24">
+            <div class="item-wrap">
+                <p class="label">Message:</p>Make things as simple as possible but no simpler.
+            </div>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    <p class="title">Company</p>
+    <div nz-row>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">Position:</p>Programmer
+            </div>
+        </div>
+        <div nz-col nzSpan="12">
+            <div class="item-wrap">
+                <p class="label">Responsibilities:</p>Coding
+            </div>
+        </div>
+    </div>
+</nz-drawer>
